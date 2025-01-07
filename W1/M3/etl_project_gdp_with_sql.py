@@ -13,7 +13,7 @@ class Mode(Enum):
     LOAD = 'LOAD'
 
 def write_log(state: Mode, is_start: bool):
-    with open('./W1/M3/data/etl_project_log.txt', 'a') as log:
+    with open('./W1/M3/data/etl_project_with_sql_log.txt', 'a') as log:
         time = dt.datetime.now().strftime('%Y-%b-%d-%H-%M-%S')
         if is_start:
             log.write(f'{time}, [{state.value}] Started\n')
@@ -25,11 +25,6 @@ def get_soup(url:str):
     response = requests.get(url)
     if response.status_code == 200:
         return BeautifulSoup(response.text, 'html.parser')
-    
-def print_data_frame(df: pd.DataFrame):
-    # df_temp = df.copy()
-    # df_temp['GDP_USD_billion'] = df_temp['GDP_USD_billion']
-    print(tabulate(df, headers='keys', tablefmt='grid'))
     
 # Table Parsing
 def get_list_from_table():
@@ -80,6 +75,18 @@ def get_column_list():
     columnList = [category, 'region'] + tempColumn
     return columnList
 
+def print_query_result(query:str):
+    con = sqlite3.connect('./W1/M3/data/World_Economies.db')
+    cursor = con.cursor()
+    data = cursor.execute(query).fetchall()
+    formatted_data = [
+    [f"{x:,.2f}" if isinstance(x, float) else x for x in row]
+    for row in data
+    ]
+    columns = [description[0] for description in cursor.description]
+    print(tabulate(formatted_data, headers=columns, tablefmt='grid'))
+    con.close()
+
 state = Mode.EXTRACT
 
 # <<< 
@@ -94,7 +101,7 @@ head = table.select('tr.static-row-header')
 body = table.find_all('tr')
 
 # RAW data JSON 파일로 저장
-with open('./W1/M3/data/Countries_by_GDP.json', 'w', encoding='utf-8') as json_file:
+with open('./W1/M3/data/Countries_by_GDP_with_sql.json', 'w', encoding='utf-8') as json_file:
     json.dump(table.text, json_file, ensure_ascii=False, indent=4)
 json_file.close()
 
@@ -122,13 +129,11 @@ gdp_imf.reset_index(drop=True, inplace=True)
 
 # [SQL 사용하지 않고 접근하기]
 # GDP가 100B 이상 국가
-print_data_frame(gdp_imf[gdp_imf['GDP_USD_billion'] > 100])
-
+gdp_imf[gdp_imf['GDP_USD_billion'] > 100]
 # 각 Region 별 상위 5개국 평균 GDP
 gdp_imf_grouped = gdp_imf.set_index(['region'])
-gdp_imf_grouped_top_5 = gdp_imf_grouped.sort_values(by=['region', 'GDP_USD_billion'], ascending=[True, False]).groupby('region').head(5)['GDP_USD_billion']
-gdp_imf_grouped_top_5_mean = gdp_imf_grouped_top_5.groupby(gdp_imf_grouped_top_5.index).mean()
-print(gdp_imf_grouped_top_5_mean)
+temp = gdp_imf_grouped.sort_values(by=['region', 'GDP_USD_billion'], ascending=[True, False]).groupby('region').head(5)['GDP_USD_billion']
+gdp_region = temp.groupby(temp.index).mean()
 
 write_log(state, False)
 state = Mode.LOAD
@@ -138,4 +143,33 @@ state = Mode.LOAD
 # >>>
 
 write_log(state, True)
+con = sqlite3.connect('./W1/M3/data/World_Economies.db')
+gdp_imf.to_sql('gdp',con, if_exists='replace')
+con.close()
 write_log(state, False)
+
+# [Query를 사용해 출력하기]
+print_query_result(
+    '''
+    SELECT *
+    FROM gdp
+    WHERE GDP_USD_billion > 100;
+    '''
+    )
+
+print_query_result(
+    '''
+    WITH rankedByRegionGdp AS (
+        SELECT
+            Country,
+            region,
+            GDP_USD_billion,
+            ROW_NUMBER() OVER (PARTITION BY region ORDER BY GDP DESC) AS rank
+        FROM gdp
+    )
+    SELECT region, AVG(GDP_USD_billion)
+    FROM rankedByRegionGdp
+    WHERE rank <= 5
+    GROUP BY region;
+    '''
+)
