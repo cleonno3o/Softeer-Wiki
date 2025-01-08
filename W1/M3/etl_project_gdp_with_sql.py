@@ -80,9 +80,9 @@ def print_query_result(query:str):
     cursor = con.cursor()
     data = cursor.execute(query).fetchall()
     formatted_data = [
-    [f"{x:,.2f}" if isinstance(x, float) else x for x in row]
-    for row in data
-    ]
+        [f"{x:,.2f}" if isinstance(x, float) else x for x in row]
+        for row in data
+        ]
     columns = [description[0] for description in cursor.description]
     print(tabulate(formatted_data, headers=columns, tablefmt='grid'))
     con.close()
