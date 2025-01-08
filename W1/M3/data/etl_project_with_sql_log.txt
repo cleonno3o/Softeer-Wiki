@@ -110,3 +110,38 @@
 2025-Jan-08-16-44-54, [TRANSFORM] Ended
 2025-Jan-08-16-44-54, [LOAD] Started
 2025-Jan-08-16-44-54, [LOAD] Ended
+2025-Jan-08-16-50-27, [EXTRACT] Started
+2025-Jan-08-16-50-27, [EXTRACT] Failed
+	HTTPSConnectionPool(host='en.wikipedia.org', port=443): Max retries exceeded with url: /wiki/List_of_countries_by_GDP_%28nominal%29 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x106a60b20>: Failed to resolve 'en.wikipedia.org' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-Jan-08-16-51-17, [EXTRACT] Started
+2025-Jan-08-16-51-17, [EXTRACT] Failed
+	HTTPSConnectionPool(host='en.wikipedia.org', port=443): Max retries exceeded with url: /wiki/List_of_countries_by_GDP_%28nominal%29 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x106b18d60>: Failed to resolve 'en.wikipedia.org' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-Jan-08-16-51-21, [EXTRACT] Started
+2025-Jan-08-16-51-21, [EXTRACT] Failed
+	HTTPSConnectionPool(host='en.wikipedia.org', port=443): Max retries exceeded with url: /wiki/List_of_countries_by_GDP_%28nominal%29 (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x1046d07c0>: Failed to resolve 'en.wikipedia.org' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-Jan-08-16-51-36, [EXTRACT] Started
+2025-Jan-08-16-51-37, [EXTRACT] Ended
+2025-Jan-08-16-51-37, [TRANSFORM] Started
+2025-Jan-08-16-51-37, [TRANSFORM] Ended
+2025-Jan-08-16-51-37, [LOAD] Started
+2025-Jan-08-16-51-37, [LOAD] Ended
+2025-Jan-08-16-53-13, [EXTRACT] Started
+2025-Jan-08-16-53-14, [EXTRACT] Ended
+2025-Jan-08-16-53-14, [TRANSFORM] Started
+2025-Jan-08-16-53-14, [TRANSFORM] Ended
+2025-Jan-08-16-53-14, [LOAD] Started
+2025-Jan-08-16-53-14, [LOAD] Ended
+2025-Jan-08-16-53-36, [EXTRACT] Started
+2025-Jan-08-16-53-37, [EXTRACT] Ended
+2025-Jan-08-16-53-37, [TRANSFORM] Started
+2025-Jan-08-16-53-37, [TRANSFORM] Ended
+2025-Jan-08-16-53-37, [LOAD] Started
+2025-Jan-08-16-53-37, [LOAD] Ended
+2025-Jan-08-16-53-37, [LOAD] Failed
+	execute expected at least 1 argument, got 0
+2025-Jan-08-16-53-58, [EXTRACT] Started
+2025-Jan-08-16-53-59, [EXTRACT] Ended
+2025-Jan-08-16-53-59, [TRANSFORM] Started
+2025-Jan-08-16-53-59, [TRANSFORM] Ended
+2025-Jan-08-16-53-59, [LOAD] Started
+2025-Jan-08-16-53-59, [LOAD] Ended

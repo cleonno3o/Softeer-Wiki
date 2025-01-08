@@ -25,7 +25,7 @@ def write_log(state: Mode, is_start: bool=True, is_error: bool=False, msg: Excep
     with open(path + log_name, 'a') as log:
         time = dt.datetime.now().strftime('%Y-%b-%d-%H-%M-%S')
         if is_error:
-            log.write(f'{time}, [{state.value}] Failed\n\t{msg}')
+            log.write(f'{time}, [{state.value}] Failed\n\t{msg}\n')
         elif is_start:
             log.write(f'{time}, [{state.value}] Started\n')
         else:
@@ -112,17 +112,25 @@ def _get_column_list(head: ResultSet[Tag]):
     return column_list
 
 def load_to_db(gdp_imf: pd.DataFrame):
-    con = sqlite3.connect(path + db_name)
-    gdp_imf.to_sql('Countries_by_GDP',con, if_exists='replace')
-    con.close()
-    
+    try:
+        con = sqlite3.connect(path + db_name)
+        gdp_imf.to_sql('Countries_by_GDP',con, if_exists='replace')
+        con.close()
+    except Exception as e:
+        write_log(state, is_error=True, msg=e)
+        exit(1)
+
 def print_query_result(query:str):
-    con = sqlite3.connect(path + db_name)
-    cursor = con.cursor()
-    data = cursor.execute(query).fetchall()
-    columns = [description[0] for description in cursor.description]
-    print(tabulate(data, headers=columns, tablefmt='grid', floatfmt='.2f'))
-    con.close()
+    try:
+        con = sqlite3.connect(path + db_name)
+        cursor = con.cursor()
+        data = cursor.execute(query).fetchall()
+        columns = [description[0] for description in cursor.description]
+        con.close()
+        print(tabulate(data, headers=columns, tablefmt='grid', floatfmt='.2f'))
+    except Exception as e:
+        write_log(state, is_error=True, msg=e)
+        exit(1)
 
 if __name__ == "__main__":
 
