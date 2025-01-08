@@ -47,7 +47,7 @@ def get_list_from_table():
             value = item.text.strip()
             # 빈 셀 스킵
             if (value == ''): continue
-            # 해당 기관의 정보가 없으면 예상치와 년도를 모두 0으로 설정
+            # 해당 기관의 정보가 없으면 예상치와 년도를 모두 NaN으로 설정
             elif (value == '—'): 
                 row_info.append('NaN')
                 row_info.append('NaN')
@@ -55,10 +55,7 @@ def get_list_from_table():
             else: row_info.append(item.text.strip())
         # 문자열로 저장된 정보를 숫자로 변환
         for i in range(1, len(row_info)):
-            # GDP 정보면 float
-            if i % 2 != 0: row_info[i] = float(row_info[i].replace(',',''))
-            # 년도 정보면 int
-            else: row_info[i] = float(row_info[i].replace(',',''))
+            row_info[i] = float(row_info[i].replace(',',''))
         # region 정보를 국가 이름과 매칭
         region = region_df[region_df['name'] == row_info[0]]['region'].values[0]
         row_info.insert(1, region)
