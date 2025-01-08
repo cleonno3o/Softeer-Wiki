@@ -27,8 +27,6 @@ def get_soup(url:str):
         return BeautifulSoup(response.text, 'html.parser')
     
 def print_data_frame(df: pd.DataFrame):
-    # df_temp = df.copy()
-    # df_temp['GDP_USD_billion'] = df_temp['GDP_USD_billion']
     print(tabulate(df, headers='keys', tablefmt='grid'))
     
 # Table Parsing
@@ -117,16 +115,6 @@ gdp_imf['GDP_USD_billion'] = round((gdp_imf['GDP'] / 1000), 2)
 gdp_imf.sort_values('GDP_USD_billion', ascending=False, inplace=True)
 gdp_imf.reset_index(drop=True, inplace=True)
 
-# [SQL 사용하지 않고 접근하기]
-# GDP가 100B 이상 국가
-print_data_frame(gdp_imf[gdp_imf['GDP_USD_billion'] > 100])
-
-# 각 Region 별 상위 5개국 평균 GDP
-gdp_imf_grouped = gdp_imf.set_index(['region'])
-gdp_imf_grouped_top_5 = gdp_imf_grouped.sort_values(by=['region', 'GDP_USD_billion'], ascending=[True, False]).groupby('region').head(5)['GDP_USD_billion']
-gdp_imf_grouped_top_5_mean = gdp_imf_grouped_top_5.groupby(gdp_imf_grouped_top_5.index).mean()
-print(gdp_imf_grouped_top_5_mean)
-
 write_log(state, False)
 state = Mode.LOAD
 
@@ -136,3 +124,13 @@ state = Mode.LOAD
 
 write_log(state, True)
 write_log(state, False)
+
+# [SQL 사용하지 않고 접근하기]
+# GDP가 100B 이상 국가
+print_data_frame(gdp_imf[gdp_imf['GDP_USD_billion'] > 100])
+
+# 각 Region 별 상위 5개국 평균 GDP
+gdp_imf_grouped = gdp_imf.set_index(['region'])
+gdp_imf_grouped_top_5 = gdp_imf_grouped.sort_values(by=['region', 'GDP_USD_billion'], ascending=[True, False]).groupby('region').head(5)['GDP_USD_billion']
+gdp_imf_grouped_top_5_mean = gdp_imf_grouped_top_5.groupby(gdp_imf_grouped_top_5.index).mean()
+print(gdp_imf_grouped_top_5_mean)

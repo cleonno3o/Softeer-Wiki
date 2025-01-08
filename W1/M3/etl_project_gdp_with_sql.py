@@ -141,7 +141,7 @@ state = Mode.LOAD
 
 write_log(state, True)
 con = sqlite3.connect('./W1/M3/data/World_Economies.db')
-gdp_imf.to_sql('gdp',con, if_exists='replace')
+gdp_imf.to_sql('Countries_by_GDP',con, if_exists='replace')
 con.close()
 write_log(state, False)
 
@@ -149,7 +149,7 @@ write_log(state, False)
 print_query_result(
     '''
     SELECT *
-    FROM gdp
+    FROM Countries_by_GDP
     WHERE GDP_USD_billion > 100;
     '''
     )
@@ -162,7 +162,7 @@ print_query_result(
             region,
             GDP_USD_billion,
             ROW_NUMBER() OVER (PARTITION BY region ORDER BY GDP DESC) AS rank
-        FROM gdp
+        FROM Countries_by_GDP
     )
     SELECT region, AVG(GDP_USD_billion)
     FROM rankedByRegionGdp
